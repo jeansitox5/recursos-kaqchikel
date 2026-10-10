@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sonidos y sílabas kaqchikel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: una sola tarjeta de juego centrada bajo una franja tejida; pensada para proyectar o usar en tableta. Look único y claro (proyector). */
+:root{
+  --bg:#fbf6ec;        /* papel de maíz */
+  --ink:#2a1d14;       /* tinta café */
+  --muted:#6d5a4a;
+  --card:#ffffff;
+  --line:#e6d9c4;
+  --rojo:#b8322a;      /* rojo de güipil */
+  --azul:#1f4e8c;      /* azul añil */
+  --verde:#2f7d4f;     /* verde milpa */
+  --amarillo:#e2a920;  /* amarillo maíz */
+  --ok-bg:#e3f2e8; --bad-bg:#fbe5e1;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --text:"Andika","Verdana",system-ui,sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink);margin:0}
+body{font-family:var(--text);font-size:18px;line-height:1.45}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:0 40px;display:flex;flex-direction:column;gap:18px}
+.tejido{height:22px;background:
+  repeating-linear-gradient(90deg,var(--rojo) 0 18px,var(--amarillo) 18px 24px,var(--azul) 24px 42px,var(--verde) 42px 48px);
+  -webkit-mask:repeating-linear-gradient(45deg,#000 0 6px,rgba(0,0,0,.75) 6px 12px);mask:repeating-linear-gradient(45deg,#000 0 6px,rgba(0,0,0,.75) 6px 12px)}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px;padding-top:14px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.05;margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:.95rem;margin:2px 0 0}
+.score{font-family:var(--display);font-weight:600;font-size:1.05rem;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px 14px;font-variant-numeric:tabular-nums}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tab{font:inherit;font-family:var(--display);font-weight:600;font-size:1.05rem;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.tab:focus-visible,.opt:focus-visible,.next:focus-visible,summary:focus-visible{outline:3px solid var(--amarillo);outline-offset:2px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.prompt{font-family:var(--display);font-weight:600;font-size:1.15rem;color:var(--muted);margin:0}
+.pic{font-size:clamp(5rem,22vw,8rem);line-height:1}
+.word{font-size:clamp(2.4rem,9vw,3.6rem);font-weight:700;letter-spacing:.02em;min-height:1.2em}
+.word .ini{color:var(--rojo)}
+.word.hide{color:transparent;text-shadow:0 0 0 transparent}
+.syl{font-size:1.4rem;color:var(--azul);font-weight:700;min-height:1.5em}
+.gloss{font-size:.9rem;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.opt{font:inherit;font-weight:700;font-size:clamp(1.6rem,6vw,2.2rem);min-width:96px;padding:10px 18px;border-radius:18px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opt small{display:block;font-size:.85rem;font-weight:400;color:var(--muted)}
+.opt.ok{background:var(--ok-bg);border-color:var(--verde)}
+.opt.bad{background:var(--bad-bg);border-color:var(--rojo)}
+.opt:disabled{cursor:default}
+.fb{font-family:var(--display);font-weight:800;font-size:1.4rem;min-height:1.6em;margin:0}
+.fb.ok{color:var(--verde)} .fb.bad{color:var(--rojo)}
+.next{font:inherit;font-family:var(--display);font-weight:800;font-size:1.15rem;padding:10px 26px;border-radius:999px;border:0;background:var(--verde);color:#fff;cursor:pointer}
+details{background:var(--card);border:2px dashed var(--line);border-radius:16px;padding:10px 16px}
+summary{cursor:pointer;font-family:var(--display);font-weight:600}
+details p,details li{font-size:.95rem;max-width:65ch}
+@media (prefers-reduced-motion:no-preference){.pop{animation:pop .35s ease-out}@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.06)}100%{transform:scale(1)}}}
+</style>
+</head>
+<body>
+
+<div class="tejido" aria-hidden="true"></div>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Juego de sonidos y sílabas</h1>
+      <p class="sub">Kaqchikel · Primer grado · Comunicación y Lenguaje L1</p>
+    </div>
+    <div class="score" id="score" aria-live="polite">Aciertos: 0 de 0</div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-syl" aria-selected="true">👏 Aplaudo las sílabas</button>
+    <button class="tab" role="tab" id="tab-ini" aria-selected="false">👂 ¿Con qué sonido empieza?</button>
+  </div>
+
+  <section class="card" id="card" aria-live="polite">
+    <p class="prompt" id="prompt"></p>
+    <div class="pic" id="pic" aria-hidden="true"></div>
+    <div class="word" id="word"></div>
+    <div class="syl" id="syl"></div>
+    <div class="gloss" id="gloss"></div>
+    <div class="opts" id="opts"></div>
+    <p class="fb" id="fb"></p>
+    <button class="next" id="next">Siguiente ➜</button>
+  </section>
+
+  <details>
+    <summary>Guía para el docente</summary>
+    <ul>
+      <li><b>Aplaudo las sílabas:</b> pida que digan la palabra en voz alta y aplaudan una vez por sílaba antes de tocar la respuesta.</li>
+      <li><b>¿Con qué sonido empieza?:</b> la palabra está oculta. Pronúnciela usted con claridad; los niños eligen la letra. Al responder, la palabra aparece con su primer sonido en rojo.</li>
+      <li>Las opciones contrastan sonidos simples y glotalizados (<i>tz / tz'</i>, <i>k / k'</i>, <i>ch / ch'</i>, <i>t / t'</i>, <i>q / q'</i>). Exagere un poco el cierre de la garganta en los glotalizados.</li>
+      <li>Una vez abierto con internet, el juego sigue funcionando aunque se pierda la conexión.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+const WORDS = [
+  {w:"tz'i'",s:["tz'i'"],es:"perro",e:"🐕"},
+  {w:"me's",s:["me's"],es:"gato",e:"🐈"},
+  {w:"ak'",s:["ak'"],es:"gallina",e:"🐔"},
+  {w:"ya'",s:["ya'"],es:"agua",e:"💧"},
+  {w:"che'",s:["che'"],es:"árbol",e:"🌳"},
+  {w:"q'ij",s:["q'ij"],es:"sol",e:"☀️"},
+  {w:"ik'",s:["ik'"],es:"luna",e:"🌙"},
+  {w:"ixim",s:["i","xim"],es:"maíz",e:"🌽"},
+  {w:"wa'y",s:["wa'y"],es:"tortilla",e:"🫓"},
+  {w:"ochoch",s:["o","choch"],es:"casa",e:"🏠"},
+  {w:"tz'ikin",s:["tz'i","kin"],es:"pájaro",e:"🐦"},
+  {w:"kej",s:["kej"],es:"venado",e:"🦌"},
+  {w:"ab'äj",s:["a","b'äj"],es:"piedra",e:"🪨"},
+  {w:"b'ey",s:["b'ey"],es:"camino",e:"🛤️"},
+  {w:"sanik",s:["sa","nik"],es:"hormiga",e:"🐜"},
+  {w:"xajab'",s:["xa","jab'"],es:"zapato",e:"👞"},
+  {w:"kumätz",s:["ku","mätz"],es:"serpiente",e:"🐍"},
+  {w:"utiw",s:["u","tiw"],es:"coyote",e:"🐺"},
+  {w:"ch'umil",s:["ch'u","mil"],es:"estrella",e:"⭐"},
+  {w:"juyu'",s:["ju","yu'"],es:"cerro",e:"⛰️"},
+  {w:"po't",s:["po't"],es:"güipil",e:"👚"},
+  {w:"t'ot'",s:["t'ot'"],es:"caracol",e:"🐌"},
+  {w:"tata'",s:["ta","ta'"],es:"papá",e:"👨"},
+  {w:"k'ix",s:["k'ix"],es:"espina",e:"🌵"},
+];
+// grafías del kaqchikel, de la más larga a la más corta
+const GRAPH = ["tz'","ch'","tz","ch","b'","k'","q'","t'","a","ä","e","i","o","u","j","k","l","m","n","p","q","r","s","t","w","x","y"];
+const first = w => GRAPH.find(g => w.startsWith(g));
+const CONTRAST = {"tz'":["tz","ch'"],"ch'":["ch","tz'"],"k'":["k","q'"],"q'":["q","k'"],"t'":["t","tz'"],"b'":["p","w"],
+  "k":["k'","q"],"ch":["ch'","x"],"tz":["tz'","s"],"t":["t'","p"],"p":["b'","t"],"a":["o","u"],"i":["e","u"],"o":["a","u"],"u":["o","i"],
+  "w":["b'","y"],"y":["i","w"],"m":["n","b'"],"s":["x","tz"],"x":["s","ch"],"j":["k","y"],"q":["q'","k"]};
+
+const $ = id => document.getElementById(id);
+let mode = "syl", deck = [], cur = null, hits = 0, tries = 0, answered = false;
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const wordHTML = (w, hl) => { const g = first(w); return hl ? `<span class="ini">${esc(g)}</span>${esc(w.slice(g.length))}` : esc(w); };
+
+function draw() {
+  if (!deck.length) deck = shuffle(WORDS);
+  cur = deck.pop(); answered = false;
+  $("pic").textContent = cur.e;
+  $("pic").classList.remove("pop"); void $("pic").offsetWidth; $("pic").classList.add("pop");
+  $("fb").textContent = ""; $("fb").className = "fb";
+  $("gloss").textContent = "";
+  $("next").hidden = true;
+  const opts = $("opts"); opts.innerHTML = "";
+  if (mode === "syl") {
+    $("prompt").textContent = "Di la palabra y aplaude. ¿Cuántas sílabas tiene?";
+    $("word").className = "word"; $("word").innerHTML = wordHTML(cur.w, false);
+    $("syl").textContent = "";
+    [1, 2, 3].forEach(n => addOpt(String(n), "👏".repeat(n), n === cur.s.length));
+  } else {
+    $("prompt").textContent = "Escucha a tu maestro. ¿Con qué sonido empieza?";
+    $("word").className = "word hide"; $("word").textContent = "·";
+    $("syl").textContent = "";
+    const g = first(cur.w);
+    const others = (CONTRAST[g] || shuffle(GRAPH.filter(x => x !== g)).slice(0, 2)).slice(0, 2);
+    shuffle([g, ...others]).forEach(x => addOpt(x, "", x === g));
+  }
+}
+function addOpt(label, small, correct) {
+  const b = document.createElement("button");
+  b.className = "opt"; b.innerHTML = esc(label) + (small ? `<small>${small}</small>` : "");
+  b.setAttribute("aria-label", label);
+  b.onclick = () => answer(b, correct);
+  b.dataset.correct = correct ? "1" : "";
+  $("opts").appendChild(b);
+}
+function answer(btn, correct) {
+  if (answered) return;
+  answered = true; tries++; if (correct) hits++;
+  btn.classList.add(correct ? "ok" : "bad");
+  [...$("opts").children].forEach(b => { b.disabled = true; if (b.dataset.correct) b.classList.add("ok"); });
+  $("fb").textContent = correct ? "¡Utz! ¡Muy bien!" : "Casi… escucha otra vez";
+  $("fb").className = "fb " + (correct ? "ok" : "bad");
+  $("word").className = "word"; $("word").innerHTML = wordHTML(cur.w, mode === "ini");
+  $("syl").textContent = cur.s.join(" · ");
+  $("gloss").textContent = "(" + cur.es + ")";
+  $("score").textContent = `Aciertos: ${hits} de ${tries}`;
+  $("next").hidden = false; $("next").focus();
+}
+function setMode(m) {
+  mode = m; deck = [];
+  $("tab-syl").setAttribute("aria-selected", m === "syl");
+  $("tab-ini").setAttribute("aria-selected", m === "ini");
+  draw();
+}
+$("tab-syl").onclick = () => setMode("syl");
+$("tab-ini").onclick = () => setMode("ini");
+$("next").onclick = draw;
+draw();
+</script>
+</body>
+</html>
